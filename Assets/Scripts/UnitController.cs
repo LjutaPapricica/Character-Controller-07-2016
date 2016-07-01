@@ -7,6 +7,7 @@ public class UnitController : MonoBehaviour
 
     private Rigidbody m_rigidbody;
     private Vector3 m_desiredVelocity;
+    private Vector3 m_desiredDirection;
 
     void Start()
     {
@@ -16,6 +17,16 @@ public class UnitController : MonoBehaviour
     public void MoveDirection(Vector3 direction)
     {
         m_desiredVelocity = direction * m_speed;
+
+        if(direction != Vector3.zero)
+        {
+            m_desiredDirection = direction;
+        }
+    }
+
+    public static float AngleSigned(Vector3 from, Vector3 to, Vector3 axis)
+    {
+        return Mathf.Atan2(Vector3.Dot(axis, Vector3.Cross(from, to)), Vector3.Dot(from, to)) * Mathf.Rad2Deg;
     }
 
     void FixedUpdate()
@@ -26,6 +37,10 @@ public class UnitController : MonoBehaviour
             velocityChange = Vector3.ClampMagnitude(velocityChange, 12.0f * Time.fixedDeltaTime);
             m_rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
         }
+
+        float angleChange = AngleSigned(transform.forward, m_desiredDirection, Vector3.up);
+        Vector3 torqueChange = new Vector3(0.0f, angleChange, 0.0f) - m_rigidbody.angularVelocity;
+        m_rigidbody.AddTorque(torqueChange, ForceMode.VelocityChange);
     }
 
     void Update()
