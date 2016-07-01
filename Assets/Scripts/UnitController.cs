@@ -17,11 +17,6 @@ public class UnitController : MonoBehaviour
     public void MoveDirection(Vector3 direction)
     {
         m_desiredVelocity = direction * m_speed;
-
-        if(direction != Vector3.zero)
-        {
-            m_desiredDirection = direction;
-        }
     }
 
     public static float AngleSigned(Vector3 from, Vector3 to, Vector3 axis)
@@ -31,6 +26,7 @@ public class UnitController : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Update the velocity.
         if(m_desiredVelocity != Vector3.zero)
         {
             Vector3 velocityChange = m_desiredVelocity - m_rigidbody.velocity;
@@ -38,6 +34,13 @@ public class UnitController : MonoBehaviour
             m_rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
         }
 
+        // Update the desired facing direction.
+        if(m_rigidbody.velocity.magnitude >= 0.1f)
+        {
+            m_desiredDirection = m_rigidbody.velocity.normalized;
+        }
+
+        // Update the rotation torque.
         float angleChange = AngleSigned(transform.forward, m_desiredDirection, Vector3.up);
         Vector3 torqueChange = new Vector3(0.0f, angleChange, 0.0f) - m_rigidbody.angularVelocity;
         m_rigidbody.AddTorque(torqueChange, ForceMode.VelocityChange);
