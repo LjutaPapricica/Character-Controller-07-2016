@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour
     public Camera m_camera;
     public PlayerController m_playerController;
 
+    public Vector3 m_anchor;
     public Vector3 m_offset;
     public Vector3 m_rotation;
 
@@ -32,6 +33,6 @@ public class CameraController : MonoBehaviour
         cameraTransform.rotation *= Quaternion.Euler(Vector3.left * m_rotation.x);
 
         // Update camera position.
-        cameraTransform.position = playerTransform.position + cameraTransform.rotation * m_offset;
+        cameraTransform.position = playerTransform.position + m_anchor + cameraTransform.rotation * m_offset;
     }
 }

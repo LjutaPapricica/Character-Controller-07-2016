@@ -4,8 +4,9 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     public GameObject m_unit;
-    private UnitController m_unitController;
     public CameraController m_cameraController;
+
+    private UnitController m_unitController;
 
     void Start()
     {
