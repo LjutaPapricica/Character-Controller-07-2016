@@ -5,8 +5,9 @@ public class CameraController : MonoBehaviour
 {
     public Camera m_camera;
     public PlayerController m_playerController;
+
     public Vector3 m_offset;
-    private Vector3 m_rotation;
+    public Vector3 m_rotation;
 
 	void Start()
     {

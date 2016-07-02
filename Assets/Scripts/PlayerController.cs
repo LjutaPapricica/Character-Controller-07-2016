@@ -4,8 +4,8 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     public GameObject m_unit;
-    public CameraController m_cameraController;
     private UnitController m_unitController;
+    public CameraController m_cameraController;
 
     void Start()
     {
@@ -20,8 +20,10 @@ public class PlayerController : MonoBehaviour
         direction.z = Input.GetAxis("Vertical");
         direction.Normalize();
 
+        // Calculate camera rotation around y-axis.
+        Quaternion cameraRotation = Quaternion.Euler(0.0f, m_cameraController.m_rotation.y, 0.0f);
+
         // Move unit in a direction relative to the camera.
-        Transform cameraTransform = m_cameraController.m_camera.transform;
-        m_unitController.MoveDirection(cameraTransform.rotation * direction);
+        m_unitController.MoveDirection(cameraRotation * direction);
     }
 }
