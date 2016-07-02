@@ -24,7 +24,13 @@ public class PlayerController : MonoBehaviour
         // Calculate camera rotation around y-axis.
         Quaternion cameraRotation = Quaternion.Euler(0.0f, m_cameraController.m_rotation.y, 0.0f);
 
-        // Move unit in a direction relative to the camera.
+        // Move the controlled unit in a direction relative to the camera.
         m_unitController.MoveDirection(cameraRotation * direction);
+
+        // Jump the controlled unit.
+        if(Input.GetKeyDown("space"))
+        {
+            m_unitController.Jump();
+        }
     }
 }

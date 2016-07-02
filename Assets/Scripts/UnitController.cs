@@ -6,9 +6,12 @@ public class UnitController : MonoBehaviour
     public float m_speed;
 
     private Rigidbody m_rigidbody;
-    private Vector3 m_cappedVelocity;
+    private Vector3 m_currentVelocity;
     private Vector3 m_desiredVelocity;
     private Vector3 m_desiredDirection;
+
+    private bool m_grounded;
+    private bool m_jump;
 
     void Start()
     {
@@ -20,6 +23,11 @@ public class UnitController : MonoBehaviour
         m_desiredVelocity = direction * m_speed;
     }
 
+    public void Jump()
+    {
+        m_jump = true;
+    }
+
     public static float AngleSigned(Vector3 from, Vector3 to, Vector3 axis)
     {
         return Mathf.Atan2(Vector3.Dot(axis, Vector3.Cross(from, to)), Vector3.Dot(from, to)) * Mathf.Rad2Deg;
@@ -28,23 +36,32 @@ public class UnitController : MonoBehaviour
     void FixedUpdate()
     {
         // Check if rigidbody is grounded.
-        bool grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.3f, 0.0f), 0.4f, ~(1 << LayerMask.NameToLayer("Capsule")));
+        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.3f, 0.0f), 0.4f, ~(1 << LayerMask.NameToLayer("Capsule")));
+
+        // Make the character jump.
+        if(m_grounded && m_jump)
+        {
+            m_rigidbody.AddForce(transform.up * 4.0f, ForceMode.VelocityChange);
+
+            m_grounded = false;
+            m_jump = false;
+        }
 
         // Update current velocity.
-        if(grounded)
+        if(m_grounded)
         {
-            Vector3 velocityChange = m_desiredVelocity - m_cappedVelocity;
+            Vector3 velocityChange = m_desiredVelocity - m_currentVelocity;
 
             if(m_desiredVelocity != Vector3.zero)
             {
-                m_cappedVelocity += Vector3.ClampMagnitude(velocityChange, 48.0f * Time.fixedDeltaTime);
+                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, 48.0f * Time.fixedDeltaTime);
             }
             else
             {
-                m_cappedVelocity += Vector3.ClampMagnitude(velocityChange, 8.0f * Time.fixedDeltaTime);
+                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, 8.0f * Time.fixedDeltaTime);
             }
 
-            m_rigidbody.AddForce(m_cappedVelocity - m_rigidbody.velocity, ForceMode.VelocityChange);
+            m_rigidbody.AddForce(m_currentVelocity - m_rigidbody.velocity, ForceMode.VelocityChange);
         }
 
         // Update the desired facing direction.
