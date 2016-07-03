@@ -35,7 +35,20 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetKey(KeyCode.Mouse0))
         {
-            m_unitController.Shoot(m_cameraController.m_camera.transform.forward);
+            Transform cameraTransform = m_cameraController.m_camera.transform;
+
+            RaycastHit hitResult;
+            if(Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hitResult, Mathf.Infinity))
+            {
+                Vector3 shootSource = m_unit.transform.position + m_unitController.m_shootOrigin;
+                m_unitController.Shoot(Vector3.Normalize(hitResult.point - shootSource));
+            }
+            else
+            {
+                Vector3 cameraTarget = cameraTransform.position + cameraTransform.forward * 100.0f;
+                Vector3 shootSource = m_unit.transform.position + m_unitController.m_shootOrigin;
+                m_unitController.Shoot(Vector3.Normalize(cameraTarget - shootSource));
+            }
         }
     }
 }

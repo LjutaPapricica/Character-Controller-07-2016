@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 438082}
   - 54: {fileID: 5492700}
   - 114: {fileID: 11474956}
+  - 114: {fileID: 11468568}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Untagged
@@ -110,6 +111,17 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &11468568
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 121290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b692463fdcd39234d8755c0eeb860fda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11474956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -121,8 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f599af282cbf0a74b9b901b576a7a8cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_speed: 4
+  m_maximumSpeed: 4
+  m_jumpForce: 4
   m_shootOrigin: {x: 0, y: 1.3, z: 0}
+  m_shootDelay: 0.2
 --- !u!136 &13669414
 CapsuleCollider:
   m_ObjectHideFlags: 1

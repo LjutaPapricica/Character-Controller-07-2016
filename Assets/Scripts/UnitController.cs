@@ -3,17 +3,22 @@ using System.Collections;
 
 public class UnitController : MonoBehaviour
 {
-    public float m_speed;
-
     private Rigidbody m_rigidbody;
+
+    public  float   m_maximumSpeed;
     private Vector3 m_currentVelocity;
     private Vector3 m_desiredVelocity;
     private Vector3 m_desiredDirection;
 
-    private bool m_grounded;
-    private bool m_jump;
+    private bool  m_grounded;
+    private bool  m_jump;
+    public  float m_jumpForce;
 
-    public Vector3 m_shootOrigin;
+    private bool    m_shoot;
+    private Vector3 m_shootDirection;
+    public  Vector3 m_shootOrigin;
+    private float   m_shootTimer;
+    public  float   m_shootDelay;
 
     void Start()
     {
@@ -22,7 +27,7 @@ public class UnitController : MonoBehaviour
 
     public void Move(Vector3 direction)
     {
-        m_desiredVelocity = direction * m_speed;
+        m_desiredVelocity = direction * m_maximumSpeed;
     }
 
     public void Jump()
@@ -32,7 +37,8 @@ public class UnitController : MonoBehaviour
 
     public void Shoot(Vector3 direction)
     {
-        Debug.DrawRay(transform.position + m_shootOrigin, direction * 100.0f, Color.red, 0.0001f, false);
+        m_shoot = true;
+        m_shootDirection = direction;
     }
 
     public static float AngleSigned(Vector3 from, Vector3 to, Vector3 axis)
@@ -43,16 +49,7 @@ public class UnitController : MonoBehaviour
     void FixedUpdate()
     {
         // Check if rigidbody is grounded.
-        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.3f, 0.0f), 0.4f, ~(1 << LayerMask.NameToLayer("Capsule")));
-
-        // Make the character jump.
-        if(m_grounded && m_jump)
-        {
-            m_rigidbody.AddForce(transform.up * 4.0f, ForceMode.VelocityChange);
-
-            m_grounded = false;
-            m_jump = false;
-        }
+        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.35f, 0.0f), 0.4f, ~(1 << LayerMask.NameToLayer("Capsule")));
 
         // Update current velocity.
         if(m_grounded)
@@ -71,6 +68,17 @@ public class UnitController : MonoBehaviour
             m_rigidbody.AddForce(m_currentVelocity - m_rigidbody.velocity, ForceMode.VelocityChange);
         }
 
+        // Make the character jump.
+        if(m_jump)
+        {
+            if(m_grounded)
+            {
+                m_rigidbody.AddForce(transform.up * m_jumpForce, ForceMode.VelocityChange);
+            }
+
+            m_jump = false;
+        }
+        
         // Update the desired facing direction.
         if(m_desiredVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
         {
@@ -81,12 +89,48 @@ public class UnitController : MonoBehaviour
         float angleChange = AngleSigned(transform.forward, m_desiredDirection, Vector3.up);
         Vector3 torqueChange = new Vector3(0.0f, angleChange, 0.0f) - m_rigidbody.angularVelocity;
         m_rigidbody.AddTorque(torqueChange, ForceMode.VelocityChange);
+
+        // Shoop from the character.
+        m_shootTimer = Mathf.Max(0.0f, m_shootTimer - Time.deltaTime);
+
+        if(m_shoot)
+        {
+            if(m_shootTimer == 0.0f)
+            {
+                Vector3 shootOrigin = transform.position + m_shootOrigin;
+
+                RaycastHit hitResult;
+                if(Physics.Raycast(shootOrigin, m_shootDirection, out hitResult, Mathf.Infinity))
+                {
+                    Debug.DrawLine(shootOrigin, hitResult.point, Color.red, 0.001f, false);
+
+                    // Apply damage to the entity.
+                    if(hitResult.rigidbody)
+                    {
+                        HealthComponent health = hitResult.rigidbody.GetComponent<HealthComponent>();
+
+                        if(health != null)
+                        {
+                            health.Damage(10);
+                        }
+                    } 
+                }
+                else
+                {
+                    Debug.DrawRay(shootOrigin, m_shootDirection * 100.0f, Color.red, 0.001f, false);
+                }
+
+                m_shootTimer = m_shootDelay;
+            }
+
+            m_shoot = false;
+        }
     }
 
     void Update()
     {
         // Debug display.
-        Debug.DrawRay(transform.position, m_rigidbody.velocity, Color.yellow, 0.0001f, false);
-        Debug.DrawRay(transform.position, transform.forward, Color.green, 0.0001f, false);
+        Debug.DrawRay(transform.position, m_rigidbody.velocity, Color.yellow, 0.001f, false);
+        Debug.DrawRay(transform.position, transform.forward, Color.green, 0.001f, false);
     }
 }
