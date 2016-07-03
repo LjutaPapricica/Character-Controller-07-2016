@@ -247,7 +247,7 @@ MonoBehaviour:
   m_camera: {fileID: 1338608859}
   m_playerController: {fileID: 244087834}
   m_anchor: {x: 0, y: 1, z: 0}
-  m_offset: {x: 1.5, y: 0.5, z: -3}
+  m_offset: {x: 1, y: 0.3, z: -3}
   m_rotation: {x: 0, y: 0, z: 0}
 --- !u!1001 &603085944
 Prefab:
@@ -523,6 +523,34 @@ GameObject:
 Transform:
   m_PrefabParentObject: {fileID: 438082, guid: 84a0ac3320a6b9148bbda317f4bb86ae, type: 2}
   m_PrefabInternal: {fileID: 1483114376}
+--- !u!1 &1482509601
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1482509602}
+  m_Layer: 0
+  m_Name: Interface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1482509602
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1482509601}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.2540607, y: 5.465351, z: -11.754015}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
 --- !u!1001 &1483114376
 Prefab:
   m_ObjectHideFlags: 0

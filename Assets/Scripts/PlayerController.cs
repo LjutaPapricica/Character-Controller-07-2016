@@ -25,12 +25,17 @@ public class PlayerController : MonoBehaviour
         Quaternion cameraRotation = Quaternion.Euler(0.0f, m_cameraController.m_rotation.y, 0.0f);
 
         // Move the controlled unit in a direction relative to the camera.
-        m_unitController.MoveDirection(cameraRotation * direction);
+        m_unitController.Move(cameraRotation * direction);
 
-        // Jump the controlled unit.
+        // Handle user input.
         if(Input.GetKey(KeyCode.Space))
         {
             m_unitController.Jump();
+        }
+
+        if(Input.GetKey(KeyCode.Mouse0))
+        {
+            m_unitController.Shoot(m_cameraController.m_camera.transform.forward);
         }
     }
 }

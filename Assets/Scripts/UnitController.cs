@@ -13,12 +13,14 @@ public class UnitController : MonoBehaviour
     private bool m_grounded;
     private bool m_jump;
 
+    public Vector3 m_shootOrigin;
+
     void Start()
     {
         m_rigidbody = GetComponent<Rigidbody>();
     }
 
-    public void MoveDirection(Vector3 direction)
+    public void Move(Vector3 direction)
     {
         m_desiredVelocity = direction * m_speed;
     }
@@ -26,6 +28,11 @@ public class UnitController : MonoBehaviour
     public void Jump()
     {
         m_jump = true;
+    }
+
+    public void Shoot(Vector3 direction)
+    {
+        Debug.DrawRay(transform.position + m_shootOrigin, direction * 100.0f, Color.red, 0.0001f, false);
     }
 
     public static float AngleSigned(Vector3 from, Vector3 to, Vector3 axis)
@@ -79,7 +86,7 @@ public class UnitController : MonoBehaviour
     void Update()
     {
         // Debug display.
-        Debug.DrawRay(transform.position, m_rigidbody.velocity, Color.red, 0.0001f, false);
+        Debug.DrawRay(transform.position, m_rigidbody.velocity, Color.yellow, 0.0001f, false);
         Debug.DrawRay(transform.position, transform.forward, Color.green, 0.0001f, false);
     }
 }
