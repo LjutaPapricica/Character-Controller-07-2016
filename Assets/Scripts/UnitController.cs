@@ -10,9 +10,9 @@ public class UnitController : MonoBehaviour
     private Vector3 m_desiredVelocity;
     private Vector3 m_desiredDirection;
 
-    private bool  m_grounded;
-    private bool  m_jump;
-    public  float m_jumpForce;
+    private bool    m_grounded;
+    private bool    m_jump;
+    public  float   m_jumpForce;
 
     private bool    m_shoot;
     private Vector3 m_shootDirection;
@@ -91,7 +91,7 @@ public class UnitController : MonoBehaviour
         m_rigidbody.AddTorque(torqueChange, ForceMode.VelocityChange);
 
         // Shoop from the character.
-        m_shootTimer = Mathf.Max(0.0f, m_shootTimer - Time.deltaTime);
+        m_shootTimer = Mathf.Max(0.0f, m_shootTimer - Time.fixedDeltaTime);
 
         if(m_shoot)
         {
