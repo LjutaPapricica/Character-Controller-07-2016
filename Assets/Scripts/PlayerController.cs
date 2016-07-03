@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
         m_unitController.MoveDirection(cameraRotation * direction);
 
         // Jump the controlled unit.
-        if(Input.GetKeyDown("space"))
+        if(Input.GetKey(KeyCode.Space))
         {
             m_unitController.Jump();
         }
