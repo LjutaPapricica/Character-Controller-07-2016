@@ -111,7 +111,7 @@ public class UnitController : MonoBehaviour
 
                         if(health != null)
                         {
-                            health.Damage(10);
+                            health.Damage(10, hitResult.point, -hitResult.normal * 300.0f);
                         }
                     } 
                 }
