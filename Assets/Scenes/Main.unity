@@ -248,8 +248,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 1338608859}
   playerController: {fileID: 244087834}
-  anchor: {x: 0, y: 1, z: 0}
-  offset: {x: 1.5, y: 0.3, z: -3}
+  anchor: {x: 0, y: 1.6, z: 0}
+  offset: {x: 0, y: 0, z: 0}
   rotation: {x: 0, y: 0, z: 0}
 --- !u!1001 &603085944
 Prefab:
