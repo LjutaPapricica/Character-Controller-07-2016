@@ -3,11 +3,12 @@ using System.Collections;
 
 public class HealthComponent : MonoBehaviour
 {
-    private int m_currentHealth = 100;
-    private int m_maximumHealth = 100;
+    public  int m_maximumHealth = 30;
+    private int m_currentHealth;
 
     void Start()
     {
+        m_currentHealth = m_maximumHealth;
     }
 
     public void Heal(int health)
