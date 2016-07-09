@@ -3,36 +3,31 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
-    public Camera m_camera;
-    public PlayerController m_playerController;
+    public Camera           playerCamera;
+    public PlayerController playerController;
 
-    public Vector3 m_anchor;
-    public Vector3 m_offset;
-    public Vector3 m_rotation;
-
-	void Start()
-    {
-	}
+    public Vector3 anchor;
+    public Vector3 offset;
+    public Vector3 rotation;
 
 	void Update()
     {
-        Transform cameraTransform = m_camera.transform;
-        Transform playerTransform = m_playerController.m_unit.transform;
+        // Get object transforms.
+        Transform cameraTransform = this.playerCamera.transform;
+        Transform playerTransform = this.playerController.m_unit.transform;
 
         // Calculate rotation from user input.
-        m_rotation.y += Input.GetAxis("Mouse X");
-        m_rotation.x += Input.GetAxis("Mouse Y");
-
-        // Wrap rotation values.
-        m_rotation.y = Mathf.Repeat(m_rotation.y, 360.0f);
-        m_rotation.x = Mathf.Repeat(m_rotation.x, 360.0f);
+        this.rotation.y = Mathf.Repeat(this.rotation.y + Input.GetAxis("Mouse X"), 360.0f);
+        this.rotation.x = Mathf.Repeat(this.rotation.x + Input.GetAxis("Mouse Y"), 360.0f);
 
         // Update camera rotation.
-        cameraTransform.rotation = Quaternion.identity;
-        cameraTransform.rotation *= Quaternion.Euler(Vector3.up * m_rotation.y);
-        cameraTransform.rotation *= Quaternion.Euler(Vector3.left * m_rotation.x);
+        cameraTransform.rotation  = Quaternion.identity;
+        cameraTransform.rotation *= Quaternion.Euler(Vector3.up * this.rotation.y);
+        cameraTransform.rotation *= Quaternion.Euler(Vector3.left * this.rotation.x);
 
         // Update camera position.
-        cameraTransform.position = playerTransform.position + m_anchor + cameraTransform.rotation * m_offset;
+        cameraTransform.position  = playerTransform.position;
+        cameraTransform.position += this.anchor;
+        cameraTransform.position += cameraTransform.rotation * this.offset;
     }
 }

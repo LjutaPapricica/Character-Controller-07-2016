@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
         direction.Normalize();
 
         // Calculate camera rotation around y-axis.
-        Quaternion cameraRotation = Quaternion.Euler(0.0f, m_cameraController.m_rotation.y, 0.0f);
+        Quaternion cameraRotation = Quaternion.Euler(0.0f, m_cameraController.rotation.y, 0.0f);
 
         // Move the controlled unit in a direction relative to the camera.
         m_unitController.Move(cameraRotation * direction);
@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetKey(KeyCode.Mouse0))
         {
-            Transform cameraTransform = m_cameraController.m_camera.transform;
+            Transform cameraTransform = m_cameraController.playerCamera.transform;
 
             RaycastHit hitResult;
             if(Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hitResult, Mathf.Infinity))
