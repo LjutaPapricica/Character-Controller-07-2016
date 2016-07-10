@@ -3,14 +3,13 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
-    public GameObject m_unit;
-    public CameraController m_cameraController;
-
-    private UnitController m_unitController;
+    public  GameObject       unit;
+    private UnitController   unitController;
+    public  CameraController cameraController;
 
     void Start()
     {
-        m_unitController = m_unit.GetComponent<UnitController>();
+        this.unitController = unit.GetComponent<UnitController>();
     }
 
     void Update()
@@ -22,32 +21,34 @@ public class PlayerController : MonoBehaviour
         direction.Normalize();
 
         // Calculate camera rotation around y-axis.
-        Quaternion cameraRotation = Quaternion.Euler(0.0f, m_cameraController.rotation.y, 0.0f);
+        Quaternion cameraRotation = Quaternion.Euler(0.0f, this.cameraController.rotation.y, 0.0f);
 
         // Move the controlled unit in a direction relative to the camera.
-        m_unitController.Move(cameraRotation * direction);
+        this.unitController.Move(cameraRotation * direction);
 
-        // Handle user input.
+        // Make the player character jump on key press.
         if(Input.GetKey(KeyCode.Space))
         {
-            m_unitController.Jump();
+            this.unitController.Jump();
         }
 
+        // Make the player character fire on key press.
         if(Input.GetKey(KeyCode.Mouse0))
         {
-            Transform cameraTransform = m_cameraController.playerCamera.transform;
+            // Calculate the point at which we want to fire at for the 3rd person mode.
+            Transform cameraTransform = this.cameraController.playerCamera.transform;
 
             RaycastHit hitResult;
             if(Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hitResult, Mathf.Infinity))
             {
-                Vector3 shootSource = m_unit.transform.position + m_unitController.m_shootOrigin;
-                m_unitController.Shoot(Vector3.Normalize(hitResult.point - shootSource));
+                Vector3 shootSource = this.unit.transform.position + this.unitController.m_shootOrigin;
+                this.unitController.Shoot(Vector3.Normalize(hitResult.point - shootSource));
             }
             else
             {
                 Vector3 cameraTarget = cameraTransform.position + cameraTransform.forward * 100.0f;
-                Vector3 shootSource = m_unit.transform.position + m_unitController.m_shootOrigin;
-                m_unitController.Shoot(Vector3.Normalize(cameraTarget - shootSource));
+                Vector3 shootSource = this.unit.transform.position + this.unitController.m_shootOrigin;
+                this.unitController.Shoot(Vector3.Normalize(cameraTarget - shootSource));
             }
         }
     }

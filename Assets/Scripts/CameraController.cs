@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
     {
         // Get object transforms.
         Transform cameraTransform = this.playerCamera.transform;
-        Transform playerTransform = this.playerController.m_unit.transform;
+        Transform playerTransform = this.playerController.unit.transform;
 
         // Calculate rotation from user input.
         this.rotation.y = Mathf.Repeat(this.rotation.y + Input.GetAxis("Mouse X"), 360.0f);
