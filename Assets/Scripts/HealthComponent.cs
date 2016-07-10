@@ -3,37 +3,37 @@ using System.Collections;
 
 public class HealthComponent : MonoBehaviour
 {
-    public  int m_maximumHealth = 30;
-    private int m_currentHealth;
-
-    void Start()
-    {
-        m_currentHealth = m_maximumHealth;
-    }
+    public int currentHealth = 30;
+    public int maximumHealth = 30;
 
     public void Heal(int health)
     {
-        m_currentHealth = Mathf.Min(m_currentHealth + health, m_maximumHealth);
+        this.currentHealth = Mathf.Min(this.currentHealth + health, this.maximumHealth);
     }
 
     public void Damage(int health, Vector3 position, Vector3 force)
     {
-        m_currentHealth = Mathf.Max(m_currentHealth - health, 0);
+        this.currentHealth = Mathf.Max(this.currentHealth - health, 0);
 
-        if(m_currentHealth == 0)
+        if(this.currentHealth == 0)
         {
-            // Spawn a corpse prefab.
-            GameObject corpse = (GameObject)Instantiate(Resources.Load("Corpse"));
-            corpse.transform.position += gameObject.transform.position;
-            corpse.transform.rotation = gameObject.transform.rotation;
-            corpse.transform.parent = GameObject.Find("Entities").transform;
-            corpse.name = "Corpse";
-
-            Rigidbody rigidbody = corpse.GetComponent<Rigidbody>();
-            rigidbody.AddForceAtPosition(force, position);
+            // Disable collisition of the object.
+            Rigidbody rigidbody = this.GetComponent<Rigidbody>();
+            rigidbody.detectCollisions = false;
 
             // Destroy the object.
-            DestroyImmediate(gameObject);
+            Destroy(this.gameObject);
+
+            // Create a corpse prefab.
+            GameObject corpse = (GameObject)Instantiate(Resources.Load("Corpse"));
+            corpse.transform.position += this.transform.position;
+            corpse.transform.rotation  = this.transform.rotation;
+            corpse.transform.parent    = GameObject.Find("Entities").transform;
+            corpse.name                = "Corpse";
+
+            // Apply force to the corpse.
+            Rigidbody corpseRigidbody = corpse.GetComponent<Rigidbody>();
+            corpseRigidbody.AddForceAtPosition(force, position);
         }
     }
 }
