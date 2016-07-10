@@ -90,21 +90,22 @@ public class UnitController : MonoBehaviour
         Vector3 torqueChange = new Vector3(0.0f, angleChange, 0.0f) - m_rigidbody.angularVelocity;
         m_rigidbody.AddTorque(torqueChange, ForceMode.VelocityChange);
 
-        // Shoop from the character.
+        // Make the character shoot.
         m_shootTimer = Mathf.Max(0.0f, m_shootTimer - Time.fixedDeltaTime);
 
         if(m_shoot)
         {
             if(m_shootTimer == 0.0f)
             {
-                Vector3 shootOrigin = transform.position + m_shootOrigin;
+                // Cast a ray from the shooting origin.
+                Vector3 shootOriginWorld = transform.position + m_shootOrigin;
 
                 RaycastHit hitResult;
-                if(Physics.Raycast(shootOrigin, m_shootDirection, out hitResult, Mathf.Infinity))
+                if(Physics.Raycast(shootOriginWorld, m_shootDirection, out hitResult, Mathf.Infinity))
                 {
-                    Debug.DrawLine(shootOrigin, hitResult.point, Color.red, 0.001f, false);
+                    Debug.DrawLine(shootOriginWorld, hitResult.point, Color.red, 0.001f, false);
 
-                    // Apply damage to the entity.
+                    // Apply damage to hit entity.
                     if(hitResult.rigidbody)
                     {
                         HealthComponent health = hitResult.rigidbody.GetComponent<HealthComponent>();
@@ -117,7 +118,7 @@ public class UnitController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.DrawRay(shootOrigin, m_shootDirection * 100.0f, Color.red, 0.001f, false);
+                    Debug.DrawRay(shootOriginWorld, m_shootDirection * 100.0f, Color.red, 0.001f, false);
                 }
 
                 m_shootTimer = m_shootDelay;

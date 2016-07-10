@@ -171,8 +171,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b80ff0cca145eb5449e1d57f9f9413b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unit: {fileID: 1413105857}
-  cameraController: {fileID: 358500565}
+  m_unit: {fileID: 1413105857}
+  m_cameraController: {fileID: 358500565}
 --- !u!1 &297384443
 GameObject:
   m_ObjectHideFlags: 0
@@ -246,11 +246,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1b6a1da293aae49b714c1bdf901536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCamera: {fileID: 1338608859}
-  playerController: {fileID: 244087834}
-  anchor: {x: 0, y: 1.6, z: 0}
-  offset: {x: 0, y: 0, z: 0}
-  rotation: {x: 0, y: 0, z: 0}
+  m_playerCamera: {fileID: 1338608859}
+  m_playerController: {fileID: 244087834}
+  m_anchor: {x: 0, y: 1.6, z: 0}
+  m_offset: {x: 0, y: 0, z: 0}
+  m_rotation: {x: 0, y: 0, z: 0}
 --- !u!1001 &603085944
 Prefab:
   m_ObjectHideFlags: 0
