@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     public Vector3 m_offset;
     public Vector3 m_rotation;
 
-	void Update()
+    void Update()
     {
         // Get object transforms.
         Transform cameraTransform = m_playerCamera.transform;
