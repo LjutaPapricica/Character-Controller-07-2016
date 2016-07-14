@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         m_unitController = m_unit.GetComponent<UnitController>();
+
+        // Lock the cursor.
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
