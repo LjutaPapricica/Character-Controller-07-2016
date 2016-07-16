@@ -33,7 +33,7 @@ public class HealthComponent : MonoBehaviour
 
             // Apply force to the corpse.
             Rigidbody corpseRigidbody = corpse.GetComponent<Rigidbody>();
-            corpseRigidbody.AddForceAtPosition(force, position);
+            corpseRigidbody.AddForceAtPosition(force, position, ForceMode.Impulse);
         }
     }
 }
