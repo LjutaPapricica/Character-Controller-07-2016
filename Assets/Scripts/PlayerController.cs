@@ -9,7 +9,11 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        // Get required components.
         m_unitController = m_unit.GetComponent<UnitController>();
+
+        // Disable AI controller.
+        m_unit.GetComponent<AIController>().m_enabled = false;
 
         // Lock the cursor.
         Cursor.lockState = CursorLockMode.Locked;
