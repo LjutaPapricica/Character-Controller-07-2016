@@ -58,6 +58,18 @@ public class UnitController : MonoBehaviour
         // Check if rigidbody is grounded.
         m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.35f, 0.0f), 0.4f, ~(1 << LayerMask.NameToLayer("Capsule")));
 
+        // Make the character jump.
+        if(m_jump)
+        {
+            if(m_grounded)
+            {
+                m_rigidbody.AddForce(transform.up * m_jumpForce, ForceMode.VelocityChange);
+                m_grounded = false;
+            }
+
+            m_jump = false;
+        }
+
         // Update current velocity.
         if(m_grounded)
         {
@@ -79,17 +91,6 @@ public class UnitController : MonoBehaviour
             }
 
             m_rigidbody.AddForce(m_currentVelocity - m_rigidbody.velocity, ForceMode.VelocityChange);
-        }
-
-        // Make the character jump.
-        if(m_jump)
-        {
-            if(m_grounded)
-            {
-                m_rigidbody.AddForce(transform.up * m_jumpForce, ForceMode.VelocityChange);
-            }
-
-            m_jump = false;
         }
 
         // Update the desired facing direction.
