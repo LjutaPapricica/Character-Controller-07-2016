@@ -61,7 +61,13 @@ public class UnitController : MonoBehaviour
         // Update current velocity.
         if(m_grounded)
         {
-            Vector3 velocityChange = m_desiredVelocity - m_currentVelocity;
+            // Calculate ground normal.
+            RaycastHit raycastGround;
+            Physics.Raycast(new Ray(transform.position + new Vector3(0.0f, 0.5f, 0.0f), -transform.up), out raycastGround);
+            Quaternion groundRotation = Quaternion.FromToRotation(Vector3.up, raycastGround.normal);
+
+            // Move along the current surface.
+            Vector3 velocityChange = groundRotation * m_desiredVelocity - m_currentVelocity;
 
             if(m_desiredVelocity != Vector3.zero)
             {
