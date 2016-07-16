@@ -8,7 +8,8 @@ public class UnitController : MonoBehaviour
     public  float   m_maximumSpeed;
     private Vector3 m_currentVelocity;
     private Vector3 m_desiredVelocity;
-    private Vector3 m_desiredDirection;
+    private Vector3 m_lookDirection;
+    private bool    m_look;
 
     private bool    m_grounded;
     private bool    m_jump;
@@ -23,6 +24,12 @@ public class UnitController : MonoBehaviour
     void Start()
     {
         m_rigidbody = GetComponent<Rigidbody>();
+    }
+
+    public void Look(Vector3 direction)
+    {
+        m_lookDirection = direction;
+        m_look = true;
     }
 
     public void Move(Vector3 direction)
@@ -78,15 +85,23 @@ public class UnitController : MonoBehaviour
 
             m_jump = false;
         }
-        
+
         // Update the desired facing direction.
-        if(m_desiredVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
+        if(m_look == false)
         {
-            m_desiredDirection = m_rigidbody.velocity.normalized;
+            if(m_desiredVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
+            {
+                m_lookDirection = m_rigidbody.velocity.normalized;
+            }
         }
 
+        m_lookDirection.y = 0.0f;
+        m_lookDirection.Normalize();
+
+        m_look = false;
+
         // Update the rotation torque.
-        float angleChange = AngleSigned(transform.forward, m_desiredDirection, Vector3.up);
+        float angleChange = AngleSigned(transform.forward, m_lookDirection, Vector3.up);
         Vector3 torqueChange = new Vector3(0.0f, angleChange, 0.0f) - m_rigidbody.angularVelocity;
         m_rigidbody.AddTorque(torqueChange, ForceMode.VelocityChange);
 
