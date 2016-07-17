@@ -56,7 +56,8 @@ public class UnitController : MonoBehaviour
     void FixedUpdate()
     {
         // Check if rigidbody is grounded.
-        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.35f, 0.0f), 0.4f, ~(1 << LayerMask.NameToLayer("Capsule")));
+        LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Capsule"));
+        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.35f, 0.0f), 0.4f, layerMask);
 
         // Make the character jump.
         if(m_jump)
