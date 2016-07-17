@@ -138,6 +138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_maximumSpeed: 4
   m_jumpForce: 4
+  m_jumpCooldown: 0.5
   m_shootOrigin: {x: 0, y: 1.3, z: 0}
   m_shootDelay: 0.25
 --- !u!114 &11484736
@@ -158,7 +159,7 @@ CapsuleCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 155692}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ea08813b06195d348b761dbdb6022d8d, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5

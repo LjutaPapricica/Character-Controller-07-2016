@@ -4,16 +4,19 @@ using System.Collections;
 public class UnitController : MonoBehaviour
 {
     private Rigidbody m_rigidbody;
+    private Collider  m_collider;
 
     public  float   m_maximumSpeed;
-    private Vector3 m_currentVelocity;
-    private Vector3 m_desiredVelocity;
+    private Vector3 m_currentMovement;
+    private Vector3 m_desiredMovement;
     private Vector3 m_lookDirection;
     private bool    m_look;
 
     private bool    m_grounded;
     private bool    m_jump;
     public  float   m_jumpForce;
+    public  float   m_jumpCooldown;
+    private float   m_jumpTimer;
 
     private bool    m_shoot;
     private Vector3 m_shootDirection;
@@ -24,6 +27,7 @@ public class UnitController : MonoBehaviour
     void Start()
     {
         m_rigidbody = GetComponent<Rigidbody>();
+        m_collider = GetComponentInChildren<Collider>();
     }
 
     public void Look(Vector3 direction)
@@ -34,7 +38,7 @@ public class UnitController : MonoBehaviour
 
     public void Move(Vector3 direction)
     {
-        m_desiredVelocity = direction * m_maximumSpeed;
+        m_desiredMovement = direction * m_maximumSpeed;
     }
 
     public void Jump()
@@ -56,16 +60,20 @@ public class UnitController : MonoBehaviour
     void FixedUpdate()
     {
         // Check if rigidbody is grounded.
-        LayerMask layerMask = ~(1 << LayerMask.NameToLayer("Capsule"));
-        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.35f, 0.0f), 0.4f, layerMask);
+        LayerMask previousLayer = m_collider.gameObject.layer;
+        m_collider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.3f, 0.0f), 0.4f);
+        m_collider.gameObject.layer = previousLayer;
 
         // Make the character jump.
+        m_jumpTimer = Mathf.Max(0.0f, m_jumpTimer - Time.fixedDeltaTime);
+
         if(m_jump)
         {
-            if(m_grounded)
+            if(m_grounded && m_jumpTimer == 0.0f)
             {
-                m_rigidbody.AddForce(transform.up * m_jumpForce, ForceMode.VelocityChange);
-                m_grounded = false;
+                m_rigidbody.AddForce(transform.up * m_jumpForce, ForceMode.Impulse);
+                m_jumpTimer = m_jumpCooldown;
             }
 
             m_jump = false;
@@ -80,24 +88,28 @@ public class UnitController : MonoBehaviour
             Quaternion groundRotation = Quaternion.FromToRotation(Vector3.up, raycastGround.normal);
 
             // Move along the current surface.
-            Vector3 velocityChange = groundRotation * m_desiredVelocity - m_currentVelocity;
+            Vector3 movementChange = groundRotation * m_desiredMovement - m_currentMovement;
 
-            if(m_desiredVelocity != Vector3.zero)
+            if(m_desiredMovement != Vector3.zero)
             {
-                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, 48.0f * Time.fixedDeltaTime);
+                m_currentMovement += Vector3.ClampMagnitude(movementChange, 48.0f * Time.fixedDeltaTime);
             }
             else
             {
-                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, 8.0f * Time.fixedDeltaTime);
+                m_currentMovement += Vector3.ClampMagnitude(movementChange, 8.0f * Time.fixedDeltaTime);
             }
 
-            m_rigidbody.AddForce(m_currentVelocity - m_rigidbody.velocity, ForceMode.VelocityChange);
+            m_rigidbody.AddForce(m_currentMovement - m_rigidbody.velocity, ForceMode.VelocityChange);
+        }
+        else
+        {
+            m_desiredMovement = Vector3.zero;
         }
 
         // Update the desired facing direction.
         if(m_look == false)
         {
-            if(m_desiredVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
+            if(m_desiredMovement != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
             {
                 m_lookDirection = m_rigidbody.velocity.normalized;
             }

@@ -49,7 +49,7 @@ public class AIController : MonoBehaviour
         {
             Vector3 offset = closestCollider.transform.position - m_collider.transform.position;
 
-            m_unitController.Shoot(offset.normalized);
+            m_unitController.Look(offset.normalized);
         }
     }
 }
