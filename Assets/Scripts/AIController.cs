@@ -47,9 +47,9 @@ public class AIController : MonoBehaviour
         // Look at the direction of the closest unit.
         if(closestCollider != null)
         {
-            Vector3 offset = closestCollider.transform.position - transform.position;
+            Vector3 offset = closestCollider.transform.position - m_collider.transform.position;
 
-            m_unitController.Look(offset.normalized);
+            m_unitController.Shoot(offset.normalized);
         }
     }
 }
