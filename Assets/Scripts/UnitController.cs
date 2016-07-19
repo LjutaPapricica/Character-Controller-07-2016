@@ -65,7 +65,7 @@ public class UnitController : MonoBehaviour
         // Check if rigidbody is grounded.
         LayerMask previousLayer = m_collider.gameObject.layer;
         m_collider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.3f, 0.0f), 0.4f);
+        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.4f, 0.0f), 0.45f);
         m_collider.gameObject.layer = previousLayer;
 
         // Make the character jump.
