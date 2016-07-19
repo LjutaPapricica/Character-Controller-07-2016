@@ -7,10 +7,13 @@ public class UnitController : MonoBehaviour
     private Collider  m_collider;
 
     public  float   m_maximumSpeed;
-    private Vector3 m_currentMovement;
-    private Vector3 m_desiredMovement;
-    private Vector3 m_lookDirection;
+    public  float   m_maximumAcceleration;
+    public  float   m_maximumDeceleration;
+    private Vector3 m_currentVelocity;
+    private Vector3 m_desiredVelocity;
+
     private bool    m_look;
+    private Vector3 m_lookDirection;
 
     private bool    m_grounded;
     private bool    m_jump;
@@ -38,7 +41,7 @@ public class UnitController : MonoBehaviour
 
     public void Move(Vector3 direction)
     {
-        m_desiredMovement = direction * m_maximumSpeed;
+        m_desiredVelocity = direction * m_maximumSpeed;
     }
 
     public void Jump()
@@ -87,29 +90,30 @@ public class UnitController : MonoBehaviour
             Physics.Raycast(new Ray(transform.position + new Vector3(0.0f, 0.5f, 0.0f), -transform.up), out raycastGround);
             Quaternion groundRotation = Quaternion.FromToRotation(Vector3.up, raycastGround.normal);
 
-            // Move along the current surface.
-            Vector3 movementChange = groundRotation * m_desiredMovement - m_currentMovement;
+            // Calculate velocity change.
+            Vector3 velocityChange = groundRotation * m_desiredVelocity - m_currentVelocity;
 
-            if(m_desiredMovement != Vector3.zero)
+            if(m_desiredVelocity != Vector3.zero)
             {
-                m_currentMovement += Vector3.ClampMagnitude(movementChange, 48.0f * Time.fixedDeltaTime);
+                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, m_maximumAcceleration * Time.fixedDeltaTime);
             }
             else
             {
-                m_currentMovement += Vector3.ClampMagnitude(movementChange, 8.0f * Time.fixedDeltaTime);
+                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, m_maximumDeceleration * Time.fixedDeltaTime);
             }
 
-            m_rigidbody.AddForce(m_currentMovement - m_rigidbody.velocity, ForceMode.VelocityChange);
+            // Change the velocity.
+            m_rigidbody.AddForce(m_currentVelocity - m_rigidbody.velocity, ForceMode.VelocityChange);
         }
         else
         {
-            m_desiredMovement = Vector3.zero;
+            m_desiredVelocity = Vector3.zero;
         }
 
         // Update the desired facing direction.
         if(m_look == false)
         {
-            if(m_desiredMovement != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
+            if(m_desiredVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
             {
                 m_lookDirection = m_rigidbody.velocity.normalized;
             }
