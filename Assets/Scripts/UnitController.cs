@@ -3,23 +3,23 @@ using System.Collections;
 
 public class UnitController : MonoBehaviour
 {
-    private Rigidbody m_rigidbody;
-    private Collider  m_collider;
+    private Rigidbody       m_rigidbody;
+    private CapsuleCollider m_collider;
 
-    public  float   m_maximumSpeed;
-    public  float   m_maximumAcceleration;
-    public  float   m_maximumDeceleration;
-    private Vector3 m_currentVelocity;
-    private Vector3 m_desiredVelocity;
+    public  float   m_movementSpeed;
+    private Vector3 m_movementVelocity;
 
     private bool    m_look;
     private Vector3 m_lookDirection;
 
     private bool    m_grounded;
+    private float   m_groundedTimer;
+
     private bool    m_jump;
-    public  float   m_jumpForce;
+    public  float   m_jumpHeight;
     public  float   m_jumpCooldown;
     private float   m_jumpTimer;
+    public float    m_airControl;
 
     private bool    m_shoot;
     private Vector3 m_shootDirection;
@@ -30,18 +30,20 @@ public class UnitController : MonoBehaviour
     void Start()
     {
         m_rigidbody = GetComponent<Rigidbody>();
-        m_collider = GetComponentInChildren<Collider>();
+        m_collider = GetComponentInChildren<CapsuleCollider>();
+
+        m_lookDirection = transform.forward;
     }
 
     public void Look(Vector3 direction)
     {
-        m_lookDirection = direction;
         m_look = true;
+        m_lookDirection = direction;
     }
 
     public void Move(Vector3 direction)
     {
-        m_desiredVelocity = direction * m_maximumSpeed;
+        m_movementVelocity = direction * m_movementSpeed;
     }
 
     public void Jump()
@@ -60,60 +62,77 @@ public class UnitController : MonoBehaviour
         return Mathf.Atan2(Vector3.Dot(axis, Vector3.Cross(from, to)), Vector3.Dot(from, to)) * Mathf.Rad2Deg;
     }
 
+    void Update()
+    {
+        // Debug display.
+        Debug.DrawRay(transform.position, m_rigidbody.velocity, Color.yellow, 0.001f, false);
+        Debug.DrawRay(transform.position, transform.forward, Color.green, 0.001f, false);
+    }
+
     void FixedUpdate()
     {
-        // Check if rigidbody is grounded.
-        LayerMask previousLayer = m_collider.gameObject.layer;
-        m_collider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        m_grounded = Physics.CheckSphere(transform.position + new Vector3(0.0f, 0.4f, 0.0f), 0.45f);
-        m_collider.gameObject.layer = previousLayer;
+        // Update grounded flag timer.
+        m_groundedTimer = Mathf.Max(0.0f, m_groundedTimer - Time.fixedDeltaTime);
 
-        // Make the character jump.
+        // Calculate slope rotation.
+        Quaternion slopeRotation = Quaternion.identity;
+        Quaternion slopeRotationInv = Quaternion.identity;
+
+        if(m_grounded)
+        {
+            RaycastHit raycastGround;
+            Physics.Raycast(new Ray(transform.position + new Vector3(0.0f, 0.5f, 0.0f), -transform.up), out raycastGround);
+
+            slopeRotation = Quaternion.FromToRotation(Vector3.up, raycastGround.normal);
+            slopeRotationInv = Quaternion.Inverse(slopeRotation);
+        }
+
+        // Calculate planar velocity.
+        Vector3 planarVelocity = m_rigidbody.velocity;
+        planarVelocity = slopeRotationInv * planarVelocity;
+        planarVelocity.y = 0.0f;
+        planarVelocity = slopeRotation * planarVelocity;
+
+        // Update movement velocity.
+        if(m_movementVelocity != Vector3.zero)
+        {
+            Vector3 velocityChange = slopeRotation * m_movementVelocity - planarVelocity;
+
+            if(!m_grounded)
+            {
+                velocityChange = Vector3.ClampMagnitude(velocityChange, m_airControl * Time.fixedDeltaTime);
+            }
+
+            m_rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
+        }
+
+        // Update jump velocity.
         m_jumpTimer = Mathf.Max(0.0f, m_jumpTimer - Time.fixedDeltaTime);
 
         if(m_jump)
         {
             if(m_grounded && m_jumpTimer == 0.0f)
             {
-                m_rigidbody.AddForce(transform.up * m_jumpForce, ForceMode.Impulse);
+                float jumpForce = Mathf.Sqrt(2.0f * 2.0f * Mathf.Abs(Physics.gravity.y));
+                m_rigidbody.AddForce(new Vector3(0.0f, jumpForce, 0.0f), ForceMode.VelocityChange);
+
                 m_jumpTimer = m_jumpCooldown;
+
+                // Set a grounded timer to prevent grounded state from being
+                // applied again before the collider lifts from the ground.
+                m_groundedTimer = 0.1f;
             }
 
             m_jump = false;
         }
 
-        // Update current velocity.
-        if(m_grounded)
-        {
-            // Calculate ground normal.
-            RaycastHit raycastGround;
-            Physics.Raycast(new Ray(transform.position + new Vector3(0.0f, 0.5f, 0.0f), -transform.up), out raycastGround);
-            Quaternion groundRotation = Quaternion.FromToRotation(Vector3.up, raycastGround.normal);
-
-            // Calculate velocity change.
-            Vector3 velocityChange = groundRotation * m_desiredVelocity - m_currentVelocity;
-
-            if(m_desiredVelocity != Vector3.zero)
-            {
-                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, m_maximumAcceleration * Time.fixedDeltaTime);
-            }
-            else
-            {
-                m_currentVelocity += Vector3.ClampMagnitude(velocityChange, m_maximumDeceleration * Time.fixedDeltaTime);
-            }
-
-            // Change the velocity.
-            m_rigidbody.AddForce(m_currentVelocity - m_rigidbody.velocity, ForceMode.VelocityChange);
-        }
-        else
-        {
-            m_desiredVelocity = Vector3.zero;
-        }
+        // Reset grounded flag.
+        m_grounded = false;
 
         // Update the desired facing direction.
         if(m_look == false)
         {
-            if(m_desiredVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
+            if(m_movementVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
             {
                 m_lookDirection = m_rigidbody.velocity.normalized;
             }
@@ -167,10 +186,59 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    void Update()
+    void OnCollisionStay(Collision collision)
     {
-        // Debug display.
-        Debug.DrawRay(transform.position, m_rigidbody.velocity, Color.yellow, 0.001f, false);
-        Debug.DrawRay(transform.position, transform.forward, Color.green, 0.001f, false);
+        TrackGrounded(collision);
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        TrackGrounded(collision);
+    }
+
+    void TrackGrounded(Collision collision)
+    {
+        // Calculate the minimum contact point for the character to be considered grounded.
+        float maxHeight = m_collider.bounds.min.y + m_collider.radius * 0.9f;
+
+        //
+        foreach(ContactPoint contact in collision.contacts)
+        {
+            if(contact.point.y < maxHeight)
+            {
+                if(!IsStatic(collision) && !IsKinematic(collision))
+                {
+                    //m_currentVelocity = Vector3.zero;
+                }
+
+                if(m_groundedTimer == 0.0f)
+                {
+                    m_grounded = true;
+                }
+            }
+
+            break;
+        }
+    }
+
+    bool IsKinematic(Collision collision)
+    {
+        return IsKinematic(collision.transform);
+    }
+
+    bool IsKinematic(Transform transform)
+    {
+        Rigidbody rigidbody = transform.GetComponent<Rigidbody>();
+        return rigidbody != null && rigidbody.isKinematic;
+    }
+
+    bool IsStatic(Collision collision)
+    {
+        return IsStatic(collision.transform);
+    }
+
+    bool IsStatic(Transform transform)
+    {
+        return transform.gameObject.isStatic;
     }
 }
