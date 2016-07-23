@@ -113,7 +113,7 @@ public class UnitController : MonoBehaviour
         {
             if(m_grounded && m_jumpTimer == 0.0f)
             {
-                float jumpForce = Mathf.Sqrt(2.0f * 2.0f * Mathf.Abs(Physics.gravity.y));
+                float jumpForce = Mathf.Sqrt(2.0f * m_jumpHeight * Mathf.Abs(Physics.gravity.y));
                 m_rigidbody.AddForce(new Vector3(0.0f, jumpForce, 0.0f), ForceMode.VelocityChange);
 
                 m_jumpTimer = m_jumpCooldown;

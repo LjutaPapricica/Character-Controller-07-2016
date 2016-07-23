@@ -5,14 +5,14 @@ public class AIController : MonoBehaviour
 {
     public bool m_enabled = true;
 
-    private UnitController m_unitController;
-    private Collider m_collider;
+    private UnitController  m_unitController;
+    private CapsuleCollider m_collider;
 
     void Start()
     {
         // Get required components.
         m_unitController = GetComponent<UnitController>();
-        m_collider = GetComponentInChildren<Collider>();
+        m_collider = GetComponentInChildren<CapsuleCollider>();
     }
 
     void FixedUpdate()

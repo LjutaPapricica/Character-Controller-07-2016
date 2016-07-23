@@ -8,13 +8,16 @@ public class HealthComponent : MonoBehaviour
 
     public void Heal(int health)
     {
+        // Add health to the health pool.
         m_currentHealth = Mathf.Min(m_currentHealth + health, m_maximumHealth);
     }
 
     public void Damage(int health, Vector3 position, Vector3 force)
     {
+        // Substract health from the health pool.
         m_currentHealth = Mathf.Max(m_currentHealth - health, 0);
 
+        // Check if the entity should be dead.
         if(m_currentHealth == 0)
         {
             // Disable collisition of the object.
