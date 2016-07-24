@@ -22,7 +22,7 @@ public class AIController : MonoBehaviour
 
         // Get a list of all colliders in a radius.
         LayerMask layerMask = 1 << LayerMask.NameToLayer("Capsule");
-        Collider[] colldiers = Physics.OverlapSphere(transform.position, 8.0f, layerMask);
+        Collider[] colldiers = Physics.OverlapSphere(transform.position, 32.0f, layerMask);
 
         // Get the closest collider.
         GameObject closestCollider = null;
@@ -49,7 +49,14 @@ public class AIController : MonoBehaviour
         {
             Vector3 offset = closestCollider.transform.position - m_collider.transform.position;
 
-            m_unitController.Look(offset.normalized);
+            if(closestDistanceSqr > 8.0f * 8.0f)
+            {
+                m_unitController.Move(offset.normalized);
+            }
+            else
+            {
+                m_unitController.Shoot(offset.normalized);
+            }
         }
     }
 }

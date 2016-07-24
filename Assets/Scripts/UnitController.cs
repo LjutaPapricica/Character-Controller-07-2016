@@ -6,6 +6,7 @@ public class UnitController : MonoBehaviour
     private Rigidbody       m_rigidbody;
     private CapsuleCollider m_collider;
 
+    private bool    m_move;
     public  float   m_movementSpeed;
     private Vector3 m_movementVelocity;
 
@@ -37,12 +38,13 @@ public class UnitController : MonoBehaviour
 
     public void Look(Vector3 direction)
     {
-        m_look = true;
+        m_look = direction != Vector3.zero;
         m_lookDirection = direction;
     }
 
     public void Move(Vector3 direction)
     {
+        m_move = direction != Vector3.zero;
         m_movementVelocity = direction * m_movementSpeed;
     }
 
@@ -53,7 +55,7 @@ public class UnitController : MonoBehaviour
 
     public void Shoot(Vector3 direction)
     {
-        m_shoot = true;
+        m_shoot = direction != Vector3.zero;
         m_shootDirection = direction;
     }
 
@@ -94,7 +96,7 @@ public class UnitController : MonoBehaviour
         planarVelocity = slopeRotation * planarVelocity;
 
         // Update movement velocity.
-        if(m_movementVelocity != Vector3.zero)
+        if(m_move)
         {
             Vector3 velocityChange = slopeRotation * m_movementVelocity - planarVelocity;
 
@@ -122,17 +124,15 @@ public class UnitController : MonoBehaviour
                 // applied again before the collider lifts from the ground.
                 m_groundedTimer = 0.1f;
             }
-
-            m_jump = false;
         }
 
         // Reset grounded flag.
         m_grounded = false;
 
         // Update the desired facing direction.
-        if(m_look == false)
+        if(!m_look)
         {
-            if(m_movementVelocity != Vector3.zero && m_rigidbody.velocity.magnitude >= 0.1f)
+            if(m_move && m_rigidbody.velocity.magnitude >= 0.1f)
             {
                 m_lookDirection = m_rigidbody.velocity.normalized;
             }
@@ -140,8 +140,6 @@ public class UnitController : MonoBehaviour
 
         m_lookDirection.y = 0.0f;
         m_lookDirection.Normalize();
-
-        m_look = false;
 
         // Update the rotation torque.
         float angleChange = AngleSigned(transform.forward, m_lookDirection, Vector3.up);
@@ -181,9 +179,13 @@ public class UnitController : MonoBehaviour
 
                 m_shootTimer = m_shootDelay;
             }
-
-            m_shoot = false;
         }
+
+        // Reset character flags.
+        m_move = false;
+        m_jump = false;
+        m_look = false;
+        m_shoot = false;
     }
 
     void OnCollisionStay(Collision collision)
