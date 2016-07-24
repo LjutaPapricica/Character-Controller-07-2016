@@ -3,8 +3,26 @@ using System.Collections;
 
 public class HealthComponent : MonoBehaviour
 {
+    private Renderer m_renderer;
+    private float m_damagedTimer;
+
     public int m_currentHealth = 30;
     public int m_maximumHealth = 30;
+
+    void Start()
+    {
+        // Get the renderer.
+        m_renderer = transform.Find("Capsule").GetComponent<Renderer>();
+    }
+
+    void Update()
+    {
+        // Change emmisive color.
+        Material material = m_renderer.material;
+        material.SetColor("_EmissionColor", Color.red * m_damagedTimer * 2.0f);
+
+        m_damagedTimer = Mathf.Max(0.0f, m_damagedTimer - Time.deltaTime);
+    }
 
     public void Heal(int health)
     {
@@ -16,6 +34,9 @@ public class HealthComponent : MonoBehaviour
     {
         // Substract health from the health pool.
         m_currentHealth = Mathf.Max(m_currentHealth - health, 0);
+
+        // Set damaged status.
+        m_damagedTimer = 0.5f;
 
         // Check if the entity should be dead.
         if(m_currentHealth == 0)
