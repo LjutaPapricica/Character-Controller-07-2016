@@ -21,6 +21,7 @@ public class HealthComponent : MonoBehaviour
         Material material = m_renderer.material;
         material.SetColor("_EmissionColor", Color.red * m_damagedTimer * 2.0f);
 
+        // Update the timer.
         m_damagedTimer = Mathf.Max(0.0f, m_damagedTimer - Time.deltaTime);
     }
 

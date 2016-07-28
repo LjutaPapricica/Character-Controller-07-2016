@@ -20,7 +20,7 @@ public class UnitController : MonoBehaviour
     public  float   m_jumpHeight;
     public  float   m_jumpCooldown;
     private float   m_jumpTimer;
-    public float    m_airControl;
+    public  float   m_airControl;
 
     private bool    m_shoot;
     private Vector3 m_shootDirection;
@@ -203,16 +203,11 @@ public class UnitController : MonoBehaviour
         // Calculate the minimum contact point for the character to be considered grounded.
         float maxHeight = m_collider.bounds.min.y + m_collider.radius * 0.9f;
 
-        //
+        // Check if the character is grounded.
         foreach(ContactPoint contact in collision.contacts)
         {
             if(contact.point.y < maxHeight)
             {
-                if(!IsStatic(collision) && !IsKinematic(collision))
-                {
-                    //m_currentVelocity = Vector3.zero;
-                }
-
                 if(m_groundedTimer == 0.0f)
                 {
                     m_grounded = true;
