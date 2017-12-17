@@ -1,6 +1,6 @@
 Character Controller
 ====
-First person shooter character controller demo made in Unity 5. Uses a physically controlled rigidbody that properly reacts to environment. Moves and jumps correctly off slopes and difficult terrain, bouncing and sliding as expected. Includes simple AI for follow and shoot at nearby targets.
+First person shooter character controller demo made in Unity 5. Uses a physically controlled rigidbody that properly reacts to the environment. Moves and jumps correctly off slopes and difficult terrain, bouncing and sliding as expected. Includes simple AI for following and shooting at nearby targets.
 
 ![](Docs/Demo.gif)
 
